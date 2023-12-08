@@ -16,6 +16,6 @@
     
 - To create counts file run using `cflib` package run `generate_counts_file.sh`
     
-- To filter counts file keeping only non-zero bi-alelic and less sites run `filter_muli_alelic_sites_Drosophila.R` (there is a bug, it doesn't include the first line for some reason, add `COUNTSFILE NPOP POP_NUM NSITES SITES_NUM` manually)
+- To filter counts file keeping only non-zero bi-alelic and less sites run `filter_muli_alelic_sites_Drosophila.R`
     
 - Convert to PoMo with `counts_to_pomo_states_converter.R`
