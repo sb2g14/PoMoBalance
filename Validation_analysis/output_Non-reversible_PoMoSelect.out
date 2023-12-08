@@ -1,0 +1,97 @@
+
+RevBayes version (1.2.1)
+Build from development-sb (rapture-1941-gcda615) on Tue 29 Nov 21:53:41 GMT 2022
+MPI enabled: using 25 processes.
+
+Visit the website www.RevBayes.com for more information about RevBayes.
+
+RevBayes is free software released under the GPL license, version 3. Type 'license()' for details.
+
+To quit RevBayes type 'quit()' or 'q()'.
+
+
+> source("validation_script_non_reveresible_fixed_all.Rev")
+   Processing file "validation_script_non_reveresible_fixed_all.Rev"
+   
+   Running burn-in phase of 1000 Monte Carlo samplers each for 1000 iterations.
+   
+
+Progress:
+0---------------25---------------50---------------75--------------100
+********************************************************************
+
+
+Running validation analysis ...
+Sim   1 / 1000		
+Sim   2 / 1000		
+Sim   3 / 1000		
+Sim   4 / 1000		
+Sim   5 / 1000		
+Sim   6 / 1000		
+Sim   7 / 1000		
+Sim   8 / 1000		
+Sim   9 / 1000		
+Sim  10 / 1000		
+Sim  11 / 1000		
+Sim  12 / 1000		
+Sim  13 / 1000		
+Sim  14 / 1000		
+Sim  15 / 1000		
+Sim  16 / 1000		
+Sim  17 / 1000		
+Sim  18 / 1000		
+Sim  19 / 1000		
+Sim  20 / 1000		
+Sim  21 / 1000		
+Sim  22 / 1000		
+Sim  23 / 1000		
+Sim  24 / 1000		
+Sim  25 / 1000		
+Sim  26 / 1000		
+Sim  27 / 1000		
+Sim  28 / 1000		
+Sim  29 / 1000		
+Sim  30 / 1000		
+Sim  31 / 1000		
+Sim  32 / 1000		
+Sim  33 / 1000		
+Sim  34 / 1000		
+Sim  35 / 1000		
+Sim  36 / 1000		
+Sim  37 / 1000		
+Sim  38 / 1000		
+Sim  39 / 1000		
+Sim  40 / 1000		
+
+Summarizing analysis ...
+
+The validation analysis ran 1000 simulations to validate the implementation.
+This analysis used a 0.9 credible interval.
+Coverage frequencies should be between 0.881 and 0.918 in 95% of the simulations.
+
+Coverage frequencies of parameters in validation analysis:
+==========================================================
+bl[1]               		0.895
+bl[2]               		0.901
+bl[3]               		0.901
+bl[4]               		0.893
+bl[5]               		0.905
+bl[6]               		0.898
+bl[7]               		0.904
+mu[10]              		0.89
+mu[11]              		0.898
+mu[12]              		0.903
+mu[1]               		0.893
+mu[2]               		0.887
+mu[3]               		0.885
+mu[4]               		0.907
+mu[5]               		0.904
+mu[6]               		0.89
+mu[7]               		0.9
+mu[8]               		0.905
+mu[9]               		0.88
+phi[2]              		0.897
+phi[3]              		0.905
+phi[4]              		0.901
+topology            		0.9
+

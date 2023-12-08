@@ -1,0 +1,15 @@
+#NEXUS
+
+	Begin taxa;
+	Dimensions ntax=4;
+	Taxlabels
+		Erecta_Dark
+		Erecta_Light
+		Melanogaster
+		Simulants
+		;
+End;
+
+Begin trees;
+tree TREE1 = [&U]((Erecta_Dark[&index=1]:0.480959[&brlen_95%_HPD={0.356946,0.614633}],Erecta_Light[&index=2]:0.480959[&brlen_95%_HPD={0.356946,0.614633}])[&index=5,posterior=0.729659]:0.978663[&brlen_95%_HPD={0.818821,1.15426}],Melanogaster[&index=4]:0.541816[&brlen_95%_HPD={0.415528,0.677425}],Simulants[&index=3]:0.541816[&brlen_95%_HPD={0.415528,0.677425}])[&index=6,posterior=1.000000]:0.000000;
+End;

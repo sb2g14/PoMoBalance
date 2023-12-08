@@ -1,0 +1,93 @@
+# Generate data with Moran model: BS
+
+n_sites <- 800000
+n_samples <- 1
+
+
+# set up moves and monitors 
+
+moves    = VectorMoves()
+
+monitors = VectorMonitors()
+
+
+
+# population size
+
+N <- 6
+
+
+# base frequencies
+
+pi_prior <- [0.25,0.25,0.25,0.25]
+
+pi <- Simplex(pi_prior)
+
+
+# exchangebilities
+rho <- [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+mu := [pi[2]*rho[1], pi[1]*rho[1], pi[3]*rho[2], pi[1]*rho[2], pi[4]*rho[3], pi[1]*rho[3], pi[3]*rho[4], pi[2]*rho[4], pi[4]*rho[5], pi[2]*rho[5], pi[4]*rho[6], pi[3]*rho[6]]
+
+
+phi := [1.0,1.0,1.0,1.0]
+
+beta <- [2, 2, 2, 2, 2, 2]
+
+B <- [2, 2, 2, 2, 2, 2]
+
+# rate matrix
+
+Q := fnPoMoBalance4N(N,mu,phi,beta,B)
+
+
+
+#tree fixed
+
+psi <- readTrees("../data/tree.nwk")[1]
+
+
+
+# root
+
+root1 <- rep(0.0,22)
+
+root1[1] <- 1.0
+root1[2] <- 1.0
+root1[3] <- 1.0
+root1[4] <- 1.0
+
+root <- simplex( root1 )
+
+
+# data
+
+sequences ~ dnPhyloCTMC(tree=psi, Q=Q,rootFrequencies=root, type="NaturalNumbers", nSites=n_sites)
+
+sequences.clamp(sequences)
+
+
+
+# MCMC 
+
+# initialize the model object 
+
+mymodel = model(pi)
+
+
+#specify monitors and output files
+
+monitors.append(mnModel(filename="output/test_pomo_balance.log",printgen=10))
+  
+monitors.append( mnFile(filename="output/test_pomo_balance.trees", printgen=10, psi) )
+
+monitors.append(mnScreen(printgen=10))
+
+
+# mcmc sampling
+
+pbalance_mcmc = mcmc(mymodel,monitors,moves)
+
+validation = validationAnalysis( pbalance_mcmc, n_samples )
+
+q()

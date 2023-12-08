@@ -1,0 +1,140 @@
+# Moran model simulator: BS
+
+data <- readCharacterDataDelimited("data/sequences_bal.txt",stateLabels=22, type="NaturalNumbers", delimiter=" ", header=FALSE)
+
+taxa       <- data.taxa()
+
+n_taxa     <- data.ntaxa()
+
+n_branches <- 2 * n_taxa - 3
+
+
+# set up moves and monitors 
+
+moves    = VectorMoves()  
+
+monitors = VectorMonitors()
+
+
+
+# population size
+
+N <- 6
+
+
+# base frequencies
+
+pi_prior <- [0.25,0.25,0.25,0.25]
+
+pi ~ dnDirichlet(pi_prior)
+
+moves.append( mvBetaSimplex( pi , weight=30 ))
+
+
+# exchangebilities
+
+for (i in 1:6){
+
+  rho[i] ~ dnExponential(10.0)
+
+  moves.append(mvScale( rho[i], weight=2 ))
+
+}
+
+mu := [pi[2]*rho[1], pi[1]*rho[1], pi[3]*rho[2], pi[1]*rho[2], pi[4]*rho[3], pi[1]*rho[3], pi[3]*rho[4], pi[2]*rho[4], pi[4]*rho[5], pi[2]*rho[5], pi[4]*rho[6], pi[3]*rho[6]]
+
+sigma ~ dnExponential(10.0)
+
+moves.append(mvScale( sigma, weight=30 ))
+
+phi := [1.0,1.0+sigma,1.0+sigma,1.0]
+
+# balancing selection
+
+for (i in 1:6){
+
+  beta[i] ~ dnExponential(1.0)
+
+  moves.append( mvScale( beta[i], weight=30 ) )
+
+}
+
+# balanced frequencies
+
+for (i in 1:6){
+
+  Num[i] ~ dnUniform(0.5,5.5)
+
+  moves.append( mvSlide( Num[i], weight=10 ) )
+  moves.append( mvScale( Num[i], weight=10 ) )
+
+  B[i] := round(Num[i])
+
+}
+
+
+# rate matrix
+
+Q := fnPoMoBalance4N(N,mu,phi,beta,B)
+
+
+
+# # defining the tree
+#tree
+
+psi <- readTrees("data/tree.nwk")[1]
+
+
+# root
+
+root1 <- rep(0.0,22)
+
+root1[1] <- 1.0
+root1[2] <- 1.0
+root1[3] <- 1.0
+root1[4] <- 1.0
+
+root <- simplex( root1 )
+
+
+# data
+
+sequences ~ dnPhyloCTMC(tree=psi, Q=Q,rootFrequencies=root, type="NaturalNumbers")
+
+sequences.clamp(data)
+
+
+
+# MCMC 
+
+# initialize the model object 
+
+mymodel = model(Q)
+
+
+#specify monitors and output files
+
+monitors.append(mnModel(filename="output3/test_pomo_balance.log",printgen=10))
+  
+monitors.append( mnFile(filename="output3/test_pomo_balance.trees", printgen=10, psi) )
+
+monitors.append(mnScreen(printgen=10))
+
+
+# mcmc sampling
+
+#pbalance_mcmc = mcmc(pbalance_model,monitors,moves, nruns=4, combine="mixed")
+pbalance_mcmc = mcmcmc(mymodel, monitors, moves, nruns=4, combine="mixed", deltaHeat=5)
+  
+#pbalance_mcmc.initializeFromCheckpoint("output/test_pomo_balance_checkpoint.txt")
+pbalance_mcmc.burnin(generations=3000,tuningInterval=200)
+pbalance_mcmc.run(generations=30000,checkpointFile="output3/test_pomo_balance_checkpoint.txt",checkpointInterval=100)
+  
+# computing the maximum a posteriori tree
+
+trace = readTreeTrace("output3/test_pomo_balance.trees", treetype="non-clock", burnin= 0.2)
+
+mapTree(trace, file="output3/test_pomo_balance_MAP.tree" )
+mccTree(trace, file="output3/test_pomo_balance_mcc.tree" )
+
+q()

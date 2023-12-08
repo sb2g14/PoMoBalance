@@ -1,0 +1,17 @@
+#NEXUS
+
+	Begin taxa;
+	Dimensions ntax=6;
+	Taxlabels
+		Erecta_Dark
+		Erecta_Light
+		Melanogaster
+		Santomea
+		Simulants
+		Yakuba
+		;
+End;
+
+Begin trees;
+tree TREE1 = [&U]((Erecta_Dark[&index=1]:0.816544[&brlen_95%_HPD={0.693958,0.928257}],Erecta_Light[&index=2]:0.816522[&brlen_95%_HPD={0.693824,0.928257}])[&index=7,posterior=0.938164]:0.209620[&brlen_95%_HPD={0.084858,0.346262}],(Melanogaster[&index=5]:0.637461[&brlen_95%_HPD={0.534283,0.737637}],Simulants[&index=6]:0.637461[&brlen_95%_HPD={0.534283,0.737637}])[&index=8,posterior=0.969550]:0.333465[&brlen_95%_HPD={0.216858,0.447972}],(Santomea[&index=3]:0.595342[&brlen_95%_HPD={0.509314,0.690086}],Yakuba[&index=4]:0.595342[&brlen_95%_HPD={0.509314,0.690086}])[&index=9,posterior=0.976889]:0.368631[&brlen_95%_HPD={0.268034,0.470736}])[&index=10,posterior=1.000000]:0.000000;
+End;

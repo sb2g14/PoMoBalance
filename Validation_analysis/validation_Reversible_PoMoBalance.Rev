@@ -1,0 +1,131 @@
+# VALIDATION ANALYSES Reversible_PoMoBalance
+
+
+taxa[1] <-taxon("pop1") 
+taxa[2] <-taxon("pop2") 
+taxa[3] <-taxon("pop3") 
+taxa[4] <-taxon("pop4") 
+taxa[5] <-taxon("pop5")
+
+n_sites <- 1000
+
+n_taxa <- 5
+
+n_branches <- 2 * n_taxa - 3
+
+
+# set up moves and monitors 
+
+moves    = VectorMoves()  
+
+monitors = VectorMonitors()
+
+
+
+# population size
+
+N <- 4
+
+
+# base frequencies
+
+pi_prior <- [0.25,0.25,0.25,0.25]
+
+pi ~ dnDirichlet(pi_prior)
+
+moves.append( mvBetaSimplex( pi , weight=2 ))
+
+
+# exchangebilities
+
+for (i in 1:6){
+
+  rho[i] ~ dnExponential(10.0)
+
+  moves.append(mvScale( rho[i], weight=2 ))
+
+}
+
+# phi
+
+phi[1] <- 1.0
+
+for (i in 2:4){
+
+  phi[i] ~ dnExponential(10.0)
+
+  moves.append(mvScale( phi[i], weight=2 ))
+
+}
+
+
+# balancing selection
+
+for (i in 1:6){
+
+  beta[i] ~ dnExponential(0.9)
+
+  moves.append( mvScale( beta[i], weight=2 ) )
+
+}
+
+# balanced frequencies
+B <- [2, 2, 2, 2, 2, 2]
+
+
+# rate matrix
+
+Q := fnReversiblePoMoBalance4N(N,pi,rho,phi,beta,B)
+
+
+#tree
+
+out_taxa = clade("pop5")
+
+
+topology ~ dnUniformTopology(taxa,outgroup=out_taxa)
+
+
+
+for (i in 1:n_branches) {
+
+   bl[i] ~ dnExponential( 1.0 )
+
+   moves.append( mvScale(bl[i]) )
+
+}
+
+psi := treeAssembly(topology, bl)
+
+
+
+# data
+
+sequences ~ dnPhyloCTMC(tree=psi, Q=Q , nSites=n_sites, type="NaturalNumbers")
+
+sequences.clamp( sequences )
+
+
+
+# model
+
+pbalance_model = model(Q)
+
+
+#specify monitors and output files
+
+monitors.append(mnModel(filename="output/test_pomo_balance.log",printgen=50, separator = TAB))
+
+
+# mcmc sampling
+
+pbalance_mcmc = mcmc(pbalance_model,monitors,moves)
+validation = validationAnalysis( pbalance_mcmc, 1000 )
+
+validation.burnin(generations=1000,tuningInterval=100)
+
+validation.run(generations=30000)
+
+validation.summarize( coverageProbability=0.9 )
+
+q()

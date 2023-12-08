@@ -1,0 +1,73 @@
+// The model for simulating GC bias on a tree of great apes
+initialize() {
+	initializeSLiMOptions(nucleotideBased=T);
+	defineConstant("L", 1e5);
+	// Mutation rate (larger for quicker effect of GC bias)
+	defineConstant("MU", 1e-6);
+	// Range to print nucleotide frequencies
+	defineConstant("RANGE", seqLen(L));
+	initializeAncestralNucleotides(randomNucleotides(L));
+	
+	// m1 mutation type: neutral
+	initializeMutationTypeNuc("m1", 0.5, "f", 0.0);	   // neutral drift
+	
+	// g1 genomic element type
+	initializeGenomicElementType("g1", c(m1), c(999), mutationMatrix=mmJukesCantor(MU));
+	
+	// uniform chromosome of length 100 kb with uniform recombination
+	initializeGenomicElement(g1, 0, L-1);
+	// Recombination rate is larger for quicker effect of GC bias
+	initializeRecombinationRate(1e-5);
+	// Initialise GC bias
+	initializeGeneConversion(0.3, 1500, 0.80, 1.0);
+}
+
+// create an ancestral population (Homininae) of 2000 individuals and split it to 1000 Hominini and 1000 Gorillini
+1 {
+	sim.addSubpop("p11", 2000);
+}
+1: late() {
+	if (sim.generation % 1000 == 1) {
+		cat(sim.generation + ": ");
+		full = sim.chromosome.ancestralNucleotides(format="integer");
+		print(nucleotideFrequencies(full[RANGE]));
+	}
+}
+10001 {
+	sim.addSubpopSplit("p22", 1000, p11);
+	sim.addSubpopSplit("p33", 1000, p11);
+	p11.setSubpopulationSize(0);
+}
+// After 12160 generations Hominini split into 500 humans and 500 chimps
+12160 {
+	sim.addSubpopSplit("p1", 500, p22);
+	sim.addSubpopSplit("p2", 500, p22);
+	p22.setSubpopulationSize(0);
+}
+// After 13480 generations Gorillini splits into 500 summatra and 500 borneo gorillas
+13480 {
+	sim.addSubpopSplit("p3", 500, p33);
+	sim.addSubpopSplit("p4", 500, p33);
+	p33.setSubpopulationSize(0);
+}
+// End of simulations
+13600 late() { sim.outputFixedMutations();
+	// Save ancestral sequence
+	seq = sim.chromosome.ancestralNucleotides();
+	writeFile("/Users/Documents/Tools/PoMoBalance/SLiM/anc.fa", c(">1", seq));
+	// Save VCFs
+	p1.genomes.outputVCF("/Users/Documents/Tools/PoMoBalance/SLiM/data_generation/p1.vcf");
+	p2.genomes.outputVCF("/Users/Documents/Tools/PoMoBalance/SLiM/data_generation/p2.vcf");
+	p3.genomes.outputVCF("/Users/Documents/Tools/PoMoBalance/SLiM/data_generation/p3.vcf");
+	p4.genomes.outputVCF("/Users/Documents/Tools/PoMoBalance/SLiM/data_generation/p4.vcf");
+	cat("Frequencies m1 p1:\n");
+	print(sim.mutationFrequencies(p1, sim.mutationsOfType(m1)));
+	cat("Frequencies m1 p2:\n");
+	print(sim.mutationFrequencies(p2, sim.mutationsOfType(m1)));
+	cat("Frequencies m1 p3:\n");
+	print(sim.mutationFrequencies(p3, sim.mutationsOfType(m1)));
+	cat("Frequencies m1 p4:\n");
+	print(sim.mutationFrequencies(p4, sim.mutationsOfType(m1)));
+	cat(sim.generation + ": ");
+	print(nucleotideFrequencies(sim.chromosome.ancestralNucleotides()));
+}
