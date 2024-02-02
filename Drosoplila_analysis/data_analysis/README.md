@@ -2,7 +2,7 @@
 
 - Download aligned sequence from BLAST
     
-- Name "Melanogaster" or "Si,mulans", etc, and copy to folder `combine_for_counts`
+- Name "Melanogaster" or "Simulans", etc, and copy to folder `combine_for_counts`
     
 - Run `process_data_for_counts.R` to rename individuals in fasta file
     
