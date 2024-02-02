@@ -1,4 +1,7 @@
 # PoMoBalance
 
-This folder contains a supporting code for publication "Polymorphism-aware models in RevBayes: Species trees, disen-
-tangling Balancing Selection and CG-biased gene conversion".
+This folder contains a supporting code for the publication "Polymorphism-aware models in RevBayes: Species trees, disentangling Balancing Selection and CG-biased gene conversion" by Svitlana Braichenko, Rui Borges and Carolin Kosiol on [BioRxiv](https://www.biorxiv.org/content/10.1101/2023.12.11.571102v1).
+
+$\textcolor{red}{\text{NB!}}$ Please note that the current version of the code has been tested in the development version of [RevBayes](https://github.com/revbayes/revbayes) built from the `dev_PoMo_bs_master` branch. In RevBayes release `v1.2.2` and earlier, there is only minimal functionality for PoMoBalance. In the next releases, we will be adding significant changes to the PoMos workflow.
+
+The folders `Moran_simulator` and `SLiM` contain scripts to simulate data for PoMoBalance testing purposes, as well as RevBayes scripts to run the inference. For a more detailed explanation of RevBayes inference scripts, please refer to our [tutorial](https://revbayes.github.io/tutorials/pomobalance/). The folder `Validation_analysis` includes scripts to run [Simulation-based Calibration](https://revbayes.github.io/developer/validation/) with PoMoBalance. In `Drosophila_analysis` we present a pipeline for converting data from `.fasta` files (downloaded via BLAST) into format accesible via RevBayes. Additionaly, there are scripts for running inference on *Droposhila* data.
